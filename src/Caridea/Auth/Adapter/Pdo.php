@@ -89,7 +89,7 @@ class Pdo extends AbstractAdapter
         $username = $this->ensure($post, 'username');
         try {
             $stmt = $this->execute($username, $request);
-            $row = $this->fetchResult($stmt->fetchAll(PDO::FETCH_NUM), $username);
+            $row = $this->fetchResult($stmt->fetchAll(\PDO::FETCH_NUM), $username);
             $this->verify($this->ensure($post, 'password'), $row[1]);
             return \Caridea\Auth\Principal::get($username,
                 $this->details($request, []));

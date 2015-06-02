@@ -87,7 +87,7 @@ class Mongo extends AbstractAdapter
             $this->verify($this->ensure($post, 'password'), $doc[$this->fieldPass]);
             return \Caridea\Auth\Principal::get($username,
                 $this->details($request, ['id' => $doc['_id']]));
-        } catch (MongoException $e) {
+        } catch (\MongoException $e) {
             throw new \Caridea\Auth\Exception\ConnectionFailed($e);
         }
     }

@@ -69,7 +69,7 @@ abstract class AbstractAdapter implements \Caridea\Auth\Adapter
      */
     protected function verify($input, $hash)
     {
-        if (!password_verify($this->ensure($input), $hash)) {
+        if (!password_verify($input, $hash)) {
             throw new \Caridea\Auth\Exception\InvalidPassword();
         }
     }
