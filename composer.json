@@ -1,10 +1,22 @@
 {
     "name": "caridea/auth",
+    "type": "library",
     "description": "A shrimp of an authentication library",
-    "version": "0.1.0-alpha",
+    "keywords": ["authentication", "auth", "authenticate"],
+    "version": "0.1.0",
+    "homepage": "http://github.com/libreworks/caridea-auth",
     "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Caridea Contributors",
+            "homepage": "https://github.com/libreworks/caridea-auth/contributors"
+        }
+    ],
     "require": {
-        "psr/http-message": "1.0"
+        "php": ">=5.5.0",
+        "psr/http-message": "1.0",
+	"caridea/event": "0.1.0",
+	"caridea/session": "0.1.0"
     },
     "autoload": {
         "psr-4": {

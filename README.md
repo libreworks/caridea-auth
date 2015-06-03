@@ -1,4 +1,4 @@
-# caridea
+# caridea-auth
 Caridea is a miniscule PHP web application library. This shrimpy fellow is what you'd use when you just want some helping hands and not a full-blown framework.
 
 This is its authentication component. It provides a way to authenticate principals and store their identity. It will broadcast authentication events for any listeners.
