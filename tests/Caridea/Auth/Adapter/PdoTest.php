@@ -40,7 +40,7 @@ class PdoTest extends \PHPUnit_Framework_TestCase
         $hash = password_hash($password, PASSWORD_DEFAULT);
         
         $pdo = $this->getMock(MockPdo::class, ['prepare']);
-        $stmt = $this->getMock(\MockPdoStatement::class, ['execute', 'fetchAll'], [], '', false);
+        $stmt = $this->getMock(MockPdoStatement::class, ['execute', 'fetchAll']);
         $pdo->expects($this->any())
             ->method('prepare')
             ->with($this->equalTo("SELECT user, pass FROM mytable WHERE user = ? AND (foo = 'bar')"))
@@ -81,7 +81,7 @@ class PdoTest extends \PHPUnit_Framework_TestCase
         $hash = password_hash($password, PASSWORD_DEFAULT);
         
         $pdo = $this->getMock(MockPdo::class, ['prepare']);
-        $stmt = $this->getMock(\MockPdoStatement::class, ['execute', 'fetchAll'], [], '', false);
+        $stmt = $this->getMock(MockPdoStatement::class, ['execute', 'fetchAll']);
         $pdo->expects($this->any())
             ->method('prepare')
             ->with($this->equalTo("SELECT user, pass FROM mytable WHERE user = ? AND (foo = 'baz')"))
@@ -114,7 +114,7 @@ class PdoTest extends \PHPUnit_Framework_TestCase
     public function testLoginMulti()
     {
         $pdo = $this->getMock(MockPdo::class, ['prepare']);
-        $stmt = $this->getMock(\MockPdoStatement::class, ['execute', 'fetchAll'], [], '', false);
+        $stmt = $this->getMock(MockPdoStatement::class, ['execute', 'fetchAll']);
         $pdo->expects($this->any())
             ->method('prepare')
             ->with($this->equalTo("SELECT user, pass FROM mytable WHERE user = ?"))
@@ -147,7 +147,7 @@ class PdoTest extends \PHPUnit_Framework_TestCase
     public function testLoginNone()
     {
         $pdo = $this->getMock(MockPdo::class, ['prepare']);
-        $stmt = $this->getMock(\MockPdoStatement::class, ['execute', 'fetchAll'], [], '', false);
+        $stmt = $this->getMock(MockPdoStatement::class, ['execute', 'fetchAll']);
         $pdo->expects($this->any())
             ->method('prepare')
             ->willReturn($stmt);
