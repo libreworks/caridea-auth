@@ -58,8 +58,7 @@ Upon login, `Service` will broadcast a `Caridea\Auth\Event\Login` if `$publisher
 // Let's say $publisher is a \Caridea\Event\Publisher, such as \Caridea\Container\Objects
 $service = new \Caridea\Auth\Service($session, $publisher);
 
-// Let's say $request is a \Psr\Http\Message\RequestInterface
-if ($service->resume($request)) {
+if ($service->resume()) {
     $principal = $service->getPrincipal();
 }
 ```
@@ -76,8 +75,7 @@ $service = new \Caridea\Auth\Service($session, $publisher);
 // Let's say $collection is a \MongoCollection
 $adapter = new \Caridea\Auth\Adapter\Mongo($collection, 'username', 'password');
 
-// Let's say $request is a \Psr\Http\Message\RequestInterface
-if ($service->logout($request)) {
+if ($service->logout()) {
     // anonymous!
 }
 ```
