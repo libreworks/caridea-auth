@@ -1,19 +1,19 @@
 <?php
 /**
  * Caridea
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * @copyright 2015 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
@@ -36,7 +36,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->getMockForAbstractClass();
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         $object = new Service($session);
@@ -56,7 +56,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->getMockForAbstractClass();
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         $object = new Service($session);
@@ -79,7 +79,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         
@@ -117,7 +117,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         
@@ -147,7 +147,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($values->get('lastActive'));
         
         $this->verifyMockObjects();
-    }    
+    }
     
     /**
      * @covers Caridea\Auth\Service::__construct
@@ -194,7 +194,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         
@@ -212,7 +212,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $values = $session->getValues(Service::class);
         $this->assertNotEquals($then, $values->get('lastActive'));
         
-        $this->verifyMockObjects();        
+        $this->verifyMockObjects();
     }
 
     /**
@@ -229,7 +229,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         
@@ -271,7 +271,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         
@@ -306,7 +306,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         
@@ -317,7 +317,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($object->logout());
         
         $this->verifyMockObjects();
-    }    
+    }
 
     /**
      * @covers Caridea\Auth\Service::logout
@@ -336,7 +336,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $session->expects($this->any())
             ->method('getValues')
-            ->willReturnCallback(function($namespace) use ($session){
+            ->willReturnCallback(function ($namespace) use ($session) {
                 return new \Caridea\Session\Values($session, $namespace);
             });
         
@@ -361,5 +361,5 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Principal::getAnonymous(), $object->getPrincipal());
         
         $this->verifyMockObjects();
-    }    
+    }
 }
