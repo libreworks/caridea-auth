@@ -7,6 +7,10 @@ This is its authentication component. It provides a way to authenticate principa
 
 Included are three adapters for authentication through MongoDB, PDO, and X.509 client SSL certificates. You can easily write your own adapter for other authentication sources like IMAP, LDAP, or OAuth2.
 
+[![Build Status](https://travis-ci.org/libreworks/caridea-auth.svg)](https://travis-ci.org/libreworks/caridea-auth)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/libreworks/caridea-auth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/libreworks/caridea-auth/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/libreworks/caridea-auth/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/libreworks/caridea-auth/?branch=master)
+
 ## Installation
 
 You can install this library using Composer:
