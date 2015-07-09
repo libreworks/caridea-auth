@@ -19,7 +19,7 @@ You can install this library using Composer:
 $ composer require caridea/auth
 ```
 
-This project requires PHP 5.5 and depends on `caridea/event`, `caridea/session`, and `psr/http-message`.
+This project requires PHP 5.5 and depends on `caridea/event`, `caridea/session`, `psr/log`, and `psr/http-message`.
 
 ## Compliance
 

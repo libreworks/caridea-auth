@@ -30,7 +30,7 @@ use \Psr\Http\Message\ServerRequestInterface;
 class Pdo extends AbstractAdapter
 {
     /**
-     * @var \PDO
+     * @var \PDO The database connection
      */
     protected $pdo;
     /**
@@ -56,8 +56,8 @@ class Pdo extends AbstractAdapter
      * @param \PDO $pdo The PDO driver
      * @param string $fieldUser The document field containing the username
      * @param string $fieldPass The document field containing the hashed password
-     * @param type $table The table (and possible JOINs) from which to SELECT
-     * @param type $where Any additional WHERE parameters (e.g. "foo = 'bar'")
+     * @param string $table The table (and possible JOINs) from which to SELECT
+     * @param string $where Any additional WHERE parameters (e.g. "foo = 'bar'")
      */
     public function __construct(\PDO $pdo, $fieldUser, $fieldPass, $table, $where = '')
     {

@@ -20,11 +20,11 @@
 namespace Caridea\Auth;
 
 /**
- * Base exception for authentication problems.
+ * Tagging interface for authentication exceptions.
  *
  * @copyright 2015 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
-class Exception extends \RuntimeException
+interface Exception
 {
 }

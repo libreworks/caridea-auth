@@ -28,11 +28,11 @@ namespace Caridea\Auth\Event;
 class Resume extends \Caridea\Auth\Event
 {
     /**
-     * @var float
+     * @var float The authenticated first active time
      */
     protected $firstActive;
     /**
-     * @var float
+     * @var float The authenticated most recent active time
      */
     protected $lastActive;
     
@@ -52,6 +52,8 @@ class Resume extends \Caridea\Auth\Event
     }
     
     /**
+     * Gets the authenticated first active time.
+     *
      * @return float The authenticated first active time
      */
     public function getFirstActive()
@@ -60,6 +62,8 @@ class Resume extends \Caridea\Auth\Event
     }
 
     /**
+     * Gets the authenticated most recent active time.
+     *
      * @return float The authenticated most recent active time
      */
     public function getLastActive()

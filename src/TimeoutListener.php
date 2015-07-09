@@ -27,6 +27,8 @@ namespace Caridea\Auth;
  */
 class TimeoutListener implements \Caridea\Event\Listener
 {
+    use \Psr\Log\LoggerAwareTrait;
+    
     /**
      * @var int Session timeout length in seconds
      */
@@ -48,15 +50,29 @@ class TimeoutListener implements \Caridea\Event\Listener
     {
         $this->timeout = (int)$timeout;
         $this->expire = (int)$expire;
+        $this->logger = new \Psr\Log\NullLogger();
     }
     
+    /**
+     * Notifies this object that an event has occurred.
+     *
+     * @param \Caridea\Event\Event $event The incoming event
+     */
     public function notify(\Caridea\Event\Event $event)
     {
         if ($event instanceof Event\Resume) {
             $now = microtime(true);
             if (($this->timeout + $event->getLastActive()) < $now) {
+                $this->logger->info(
+                    "Authentication for {user} has timed out",
+                    ['user' => $event->getPrincipal()]
+                );
                 $event->getSource()->logout();
             } elseif (($this->expire + $event->getFirstActive()) < $now) {
+                $this->logger->info(
+                    "Authentication for {user} has expired",
+                    ['user' => $event->getPrincipal()]
+                );
                 $event->getSource()->logout();
             }
         }

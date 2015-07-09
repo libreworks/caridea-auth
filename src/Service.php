@@ -22,8 +22,7 @@ namespace Caridea\Auth;
 use Caridea\Event\Publisher;
 use Caridea\Session\Session;
 use Caridea\Session\Values;
-
-use \Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Authentication service.
@@ -33,12 +32,14 @@ use \Psr\Http\Message\ServerRequestInterface;
  */
 class Service
 {
+    use \Psr\Log\LoggerAwareTrait;
+    
     /**
      * @var Adapter The default auth adapter
      */
     protected $adapter;
     /**
-     * @var Caridea\Session\Session The session utility
+     * @var \Caridea\Session\Session The session utility
      */
     protected $session;
     /**
@@ -46,11 +47,11 @@ class Service
      */
     protected $values;
     /**
-     * @var Caridea\Event\Publisher The event publisher
+     * @var \Caridea\Event\Publisher The event publisher
      */
     protected $publisher;
     /**
-     * @var Principal
+     * @var Principal The authenticated principal
      */
     protected $principal;
     
@@ -67,6 +68,7 @@ class Service
         $this->values = $session->getValues(__CLASS__);
         $this->publisher = $publisher;
         $this->adapter = $adapter;
+        $this->logger = new \Psr\Log\NullLogger();
     }
     
     /**
@@ -121,9 +123,19 @@ class Service
         $this->values->offsetSet('firstActive', $now);
         $this->values->offsetSet('lastActive', $now);
         
+        $this->logger->info(
+            "Authentication login: {user}",
+            ['user' => $principal]
+        );
         return $this->publishLogin($principal);
     }
     
+    /**
+     * Publishes the login event.
+     *
+     * @param \Caridea\Auth\Principal $principal The authenticated principal
+     * @return boolean Always true
+     */
     protected function publishLogin(Principal $principal)
     {
         if ($this->publisher) {
@@ -142,6 +154,10 @@ class Service
         if ($this->values->offsetExists('principal')) {
             $this->principal = $this->values->get('principal');
             
+            $this->logger->info(
+                "Authentication resume: {user}",
+                ['user' => $this->principal]
+            );
             $this->publishResume($this->principal, $this->values);
             
             $this->values->offsetSet('lastActive', microtime(true));
@@ -151,6 +167,12 @@ class Service
         return false;
     }
     
+    /**
+     * Publishes the resume event.
+     *
+     * @param \Caridea\Auth\Principal $principal The authenticated principal
+     * @param Values $values The session values
+     */
     protected function publishResume(Principal $principal, Values $values)
     {
         if ($this->publisher) {
@@ -176,11 +198,21 @@ class Service
 
             $this->session->destroy();
 
+            $this->logger->info(
+                "Authentication logout: {user}",
+                ['user' => $principal]
+            );
             return $this->publishLogout($principal);
         }
         return false;
     }
     
+    /**
+     * Publishes the logout event.
+     *
+     * @param \Caridea\Auth\Principal $principal The authenticated principal
+     * @return boolean Always true
+     */
     protected function publishLogout(Principal $principal)
     {
         if ($this->publisher) {

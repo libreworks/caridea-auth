@@ -27,10 +27,22 @@ namespace Caridea\Auth;
  */
 class Principal
 {
+    /**
+     * @var string The principal username
+     */
     protected $username;
+    /**
+     * @var bool Whether the principal is anonymous
+     */
     protected $anonymous;
+    /**
+     * @var array Associative array of extra details
+     */
     protected $details;
     
+    /**
+     * @var Principal singleton instance of the anonymous Principal
+     */
     private static $anon;
     
     /**
@@ -80,6 +92,17 @@ class Principal
     }
     
     /**
+     * Gets a string representation.
+     *
+     * @return string The string representation
+     */
+    public function __toString()
+    {
+        return $this->anonymous ? "[anonymous]" : $this->username;
+    }
+    
+    /**
+     * Gets a non-anonymous Principal.
      *
      * @param string $username The principal username
      * @param array $details Any authentication details

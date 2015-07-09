@@ -28,12 +28,12 @@ namespace Caridea\Auth\Exception;
  * @copyright 2015 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
-class ConnectionFailed extends \Caridea\Auth\Exception
+class ConnectionFailed extends \RuntimeException implements \Caridea\Auth\Exception
 {
     /**
      * Creates a new exception
      *
-     * @param Exception $previous Optional preceding exception
+     * @param \Exception $previous Optional preceding exception
      */
     public function __construct(\Exception $previous = null)
     {

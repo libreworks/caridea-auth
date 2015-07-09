@@ -25,7 +25,7 @@ namespace Caridea\Auth\Exception;
  * @copyright 2015 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
-class InvalidPassword extends \Caridea\Auth\Exception
+class InvalidPassword extends \InvalidArgumentException implements \Caridea\Auth\Exception
 {
     /**
      * Creates a new exception

@@ -44,6 +44,7 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($username, $object->getUsername());
         $this->assertEquals($details, $object->getDetails());
         $this->assertFalse($object->isAnonymous());
+        $this->assertEquals($username, (string)$object);
     }
 
     /**
@@ -55,6 +56,7 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($anon->getUsername());
         $this->assertEmpty($anon->getDetails());
         $this->assertTrue($anon->isAnonymous());
+        $this->assertEquals('[anonymous]', (string)$anon);
         $this->assertSame($anon, Principal::getAnonymous());
     }
 }
