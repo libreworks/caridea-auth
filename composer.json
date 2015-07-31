@@ -19,6 +19,9 @@
 	"caridea/event": "0.1.0",
 	"caridea/session": "0.1.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~4.6"
+    },
     "autoload": {
         "psr-4": {
           "Caridea\\Auth\\": "src/"

@@ -81,7 +81,7 @@ class Mongo extends AbstractAdapter
      */
     public function login(ServerRequestInterface $request)
     {
-        $post = $request->getParsedBody();
+        $post = (array) $request->getParsedBody();
         $username = $this->ensure($post, 'username');
         try {
             $results = $this->getResults($username, $request);

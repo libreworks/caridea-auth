@@ -87,7 +87,7 @@ class Pdo extends AbstractAdapter
      */
     public function login(ServerRequestInterface $request)
     {
-        $post = $request->getParsedBody();
+        $post = (array) $request->getParsedBody();
         $username = $this->ensure($post, 'username');
         try {
             $stmt = $this->execute($username, $request);
