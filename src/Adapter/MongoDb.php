@@ -22,17 +22,25 @@ namespace Caridea\Auth\Adapter;
 use \Psr\Http\Message\ServerRequestInterface;
 
 /**
- * PDO authentication adapter.
+ * MongoDB (new driver) authentication adapter.
  *
  * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
-class Pdo extends AbstractAdapter
+class MongoDb extends AbstractAdapter
 {
     /**
-     * @var \PDO The database connection
+     * @var \MongoDB\Driver\Manager
      */
-    protected $pdo;
+    private $manager;
+    /**
+     * @var string
+     */
+    private $collection;
+    /**
+     * @var \MongoDB\Driver\ReadPreference
+     */
+    private $rp;
     /**
      * @var string The document field containing the username
      */
@@ -42,31 +50,29 @@ class Pdo extends AbstractAdapter
      */
     protected $fieldPass;
     /**
-     * @var string The table (and possible JOINs) from which to SELECT
+     * @var array Associative array to use to limit user accounts
      */
-    protected $table;
-    /**
-     * @var string Any additional WHERE parameters
-     */
-    protected $where;
+    protected $query = [];
     
     /**
-     * Creates a new PDO authentication adapter.
+     * Creates a new MongoDB authentication adapter.
      *
-     * @param \PDO $pdo The PDO driver
+     * @param \MongoDB\Driver\Manager $manager The manager
+     * @param string $collection The collection name (e.g. "mydb.emails")
      * @param string $fieldUser The document field containing the username
      * @param string $fieldPass The document field containing the hashed password
-     * @param string $table The table (and possible JOINs) from which to SELECT
-     * @param string $where Any additional WHERE parameters (e.g. "foo = 'bar'")
+     * @param array $query Optional associative array to use to limit user accounts
+     * @param \MongoDB\Driver\ReadPreference $rp Optional read preference
      */
-    public function __construct(\PDO $pdo, $fieldUser, $fieldPass, $table, $where = '')
+    public function __construct(\MongoDB\Driver\Manager $manager, $collection, $fieldUser, $fieldPass, $query = [], \MongoDB\Driver\ReadPreference $rp = null)
     {
-        $this->pdo = $pdo;
+        $this->manager = $manager;
+        $this->collection = $this->checkBlank($collection, "collection");
         $this->fieldUser = $this->checkBlank($fieldUser, "username");
         $this->fieldPass = $this->checkBlank($fieldPass, "password");
-        $this->table = $this->checkBlank($table, "table");
-        $this->where = $where;
-    }
+        $this->query = $query;
+        $this->rp = $rp;
+    }    
     
     /**
      * Authenticates the current principal using the provided credentials.
@@ -74,8 +80,8 @@ class Pdo extends AbstractAdapter
      * This method expects two request body values to be available. These are
      * `username` and `password`, as provided by the authenticating user.
      *
-     * The principal details will include `ip` (remote IP address), and `ua`
-     * (remote User Agent).
+     * The principal details will include `ip` (remote IP address), `ua` (remote
+     * User Agent), and `ip` (MongoDB document `_id` field for user record).
      *
      * @param ServerRequestInterface $request The Server Request message containing credentials
      * @return \Caridea\Auth\Principal An authenticated principal
@@ -83,71 +89,59 @@ class Pdo extends AbstractAdapter
      * @throws \Caridea\Auth\Exception\UsernameNotFound if the provided username wasn't found
      * @throws \Caridea\Auth\Exception\UsernameAmbiguous if the provided username matches multiple accounts
      * @throws \Caridea\Auth\Exception\InvalidPassword if the provided password is invalid
-     * @throws \Caridea\Auth\Exception\ConnectionFailed if a PDO error is encountered
+     * @throws \Caridea\Auth\Exception\ConnectionFailed if a MongoDB error is encountered
      */
     public function login(ServerRequestInterface $request)
     {
         $post = (array) $request->getParsedBody();
         $username = $this->ensure($post, 'username');
         try {
-            $stmt = $this->execute($username, $request);
-            $row = $this->fetchResult($stmt->fetchAll(\PDO::FETCH_NUM), $username);
-            $this->verify($this->ensure($post, 'password'), $row[1]);
+            $results = $this->getResults($username, $request);
+            $doc = $this->fetchResult($results, $username);
+            $this->verify($this->ensure($post, 'password'), $doc->{$this->fieldPass});
             return \Caridea\Auth\Principal::get(
                 $username,
-                $this->details($request, [])
+                $this->details($request, ['id' => $doc->_id])
             );
-        } catch (\PDOException $e) {
+        } catch (\MongoDB\Driver\Exception\Exception $e) {
             throw new \Caridea\Auth\Exception\ConnectionFailed($e);
         }
     }
     
     /**
-     * Queries the database table.
-     *
-     * Override this method if you want to bind additonal values to the SQL
-     * query.
+     * Queries the MongoDB collection.
      *
      * @param string $username The username to use for parameter binding
      * @param ServerRequestInterface $request The Server Request message (to use for additional parameter binding)
+     * @return \MongoDB\Driver\Cursor The results cursor
      */
-    protected function execute($username, ServerRequestInterface $request)
+    protected function getResults($username, ServerRequestInterface $request)
     {
-        $stmt = $this->pdo->prepare($this->getSql());
-        $stmt->execute([$username]);
-        return $stmt;
+        $q = new \MongoDB\Driver\Query(
+            array_merge($this->query, [($this->fieldUser) => $username]),
+            ['projection' => [($this->fieldUser) => true, ($this->fieldPass) => true]]
+        );
+        return $this->manager->executeQuery($this->collection, $q, $this->rp);
+            
     }
-    
+
     /**
-     * Builds the SQL query to be executed.
+     * Fetches a single result from the Mongo Cursor.
      *
-     * @return string The SQL query
-     */
-    protected function getSql()
-    {
-        $sql = "SELECT {$this->fieldUser}, {$this->fieldPass} FROM {$this->table} WHERE {$this->fieldUser} = ?";
-        if ($this->where) {
-            $sql .= " AND ({$this->where})";
-        }
-        return $sql;
-    }
-    
-    /**
-     * Fetches a single result from the database resultset.
-     *
-     * @param array $results The results as returned from `fetchAll`
+     * @param \MongoCursor $results The results
      * @param string $username The attempted username (for Exception purposes)
-     * @return array A single database result
+     * @return array A single MongoDB document
      * @throws \Caridea\Auth\Exception\UsernameAmbiguous If there is more than 1 result
      * @throws \Caridea\Auth\Exception\UsernameNotFound If there are 0 results
      */
-    protected function fetchResult(array $results, $username)
+    protected function fetchResult(\MongoDB\Driver\Cursor $results, $username)
     {
-        if (count($results) > 1) {
+        $values = $results->toArray();
+        if (count($values) > 1) {
             throw new \Caridea\Auth\Exception\UsernameAmbiguous($username);
-        } elseif (count($results) == 0) {
+        } elseif (count($values) == 0) {
             throw new \Caridea\Auth\Exception\UsernameNotFound($username);
         }
-        return current($results);
+        return current($values);
     }
 }

@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * @copyright 2015 LibreWorks contributors
+ * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
 namespace Caridea\Auth;
@@ -22,7 +22,7 @@ namespace Caridea\Auth;
 /**
  * Security principal; an authenticated or anonymous user.
  *
- * @copyright 2015 LibreWorks contributors
+ * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
 class Principal
@@ -50,7 +50,7 @@ class Principal
      *
      * @param string $username
      * @param array $details
-     * @param boolean $anonymous
+     * @param bool $anonymous
      */
     protected function __construct($username, array $details, $anonymous = false)
     {

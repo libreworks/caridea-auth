@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * @copyright 2015 LibreWorks contributors
+ * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
 namespace Caridea\Auth;
@@ -22,7 +22,7 @@ namespace Caridea\Auth;
 /**
  * A listener which will log out a session if it's idle or has been active for too long.
  *
- * @copyright 2015 LibreWorks contributors
+ * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
 class TimeoutListener implements \Caridea\Event\Listener

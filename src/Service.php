@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * @copyright 2015 LibreWorks contributors
+ * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
 namespace Caridea\Auth;
@@ -27,7 +27,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Authentication service.
  *
- * @copyright 2015 LibreWorks contributors
+ * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
 class Service
@@ -94,7 +94,7 @@ class Service
      * @param ServerRequestInterface $request The Server Request message containing credentials
      * @param Adapter $adapter An optional adapter to use.
      *     Will use the default authentication adapter if none is specified.
-     * @return boolean Whether the session could be established
+     * @return bool Whether the session could be established
      * @throws \InvalidArgumentException If no adapter is provided and no default adapter is set
      * @throws Exception\UsernameNotFound if the provided username wasn't found
      * @throws Exception\UsernameAmbiguous if the provided username matches multiple accounts
@@ -134,7 +134,7 @@ class Service
      * Publishes the login event.
      *
      * @param \Caridea\Auth\Principal $principal The authenticated principal
-     * @return boolean Always true
+     * @return bool Always true
      */
     protected function publishLogin(Principal $principal)
     {
@@ -147,7 +147,7 @@ class Service
     /**
      * Resumes an existing authenticated session.
      *
-     * @return boolean If an authentication session existed
+     * @return bool If an authentication session existed
      */
     public function resume()
     {
@@ -188,7 +188,7 @@ class Service
     /**
      * Logs out the currently authenticated principal.
      *
-     * @return boolean If a principal existed in the session to log out
+     * @return bool If a principal existed in the session to log out
      */
     public function logout()
     {
@@ -211,7 +211,7 @@ class Service
      * Publishes the logout event.
      *
      * @param \Caridea\Auth\Principal $principal The authenticated principal
-     * @return boolean Always true
+     * @return bool Always true
      */
     protected function publishLogout(Principal $principal)
     {

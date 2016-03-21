@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * @copyright 2015 LibreWorks contributors
+ * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
 namespace Caridea\Auth\Exception;
@@ -25,7 +25,7 @@ namespace Caridea\Auth\Exception;
  * This exception should be used when a failure occurs in connecting to some
  * source repository, such as a database, an LDAP directory, or an IMAP server.
  *
- * @copyright 2015 LibreWorks contributors
+ * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
 class ConnectionFailed extends \RuntimeException implements \Caridea\Auth\Exception
