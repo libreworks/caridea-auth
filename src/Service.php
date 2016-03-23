@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -80,7 +81,7 @@ class Service
      *
      * @return Principal the authenticated principal
      */
-    public function getPrincipal()
+    public function getPrincipal(): Principal
     {
         if ($this->principal === null && !$this->resume()) {
             $this->principal = Principal::getAnonymous();
@@ -102,7 +103,7 @@ class Service
      * @throws Exception\ConnectionFailed if the access to a remote data source failed
      *     (e.g. missing flat file, unreachable LDAP server, database login denied)
      */
-    public function login(ServerRequestInterface $request, Adapter $adapter = null)
+    public function login(ServerRequestInterface $request, Adapter $adapter = null): bool
     {
         $started = $this->session->resume() || $this->session->start();
         if (!$started) {
@@ -136,7 +137,7 @@ class Service
      * @param \Caridea\Auth\Principal $principal The authenticated principal
      * @return bool Always true
      */
-    protected function publishLogin(Principal $principal)
+    protected function publishLogin(Principal $principal): bool
     {
         if ($this->publisher) {
             $this->publisher->publish(new Event\Login($this, $principal));
@@ -149,7 +150,7 @@ class Service
      *
      * @return bool If an authentication session existed
      */
-    public function resume()
+    public function resume(): bool
     {
         if ($this->values->offsetExists('principal')) {
             $this->principal = $this->values->get('principal');
@@ -190,7 +191,7 @@ class Service
      *
      * @return bool If a principal existed in the session to log out
      */
-    public function logout()
+    public function logout(): bool
     {
         if ($this->values->offsetExists('principal')) {
             $principal = $this->getPrincipal();
@@ -213,7 +214,7 @@ class Service
      * @param \Caridea\Auth\Principal $principal The authenticated principal
      * @return bool Always true
      */
-    protected function publishLogout(Principal $principal)
+    protected function publishLogout(Principal $principal): bool
     {
         if ($this->publisher) {
             $this->publisher->publish(new Event\Logout($this, $principal));

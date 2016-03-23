@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -52,7 +53,7 @@ class Principal
      * @param array $details
      * @param bool $anonymous
      */
-    protected function __construct($username, array $details, $anonymous = false)
+    protected function __construct(string $username, array $details, bool $anonymous = false)
     {
         $this->username = $username;
         $this->details = $details;
@@ -64,7 +65,7 @@ class Principal
      *
      * @return array The auth details
      */
-    public function getDetails()
+    public function getDetails(): array
     {
         return $this->details;
     }
@@ -76,7 +77,7 @@ class Principal
      *
      * @return string The username
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -86,7 +87,7 @@ class Principal
      *
      * @return bool Whether this principal is anonymous
      */
-    public function isAnonymous()
+    public function isAnonymous(): bool
     {
         return $this->anonymous;
     }
@@ -96,7 +97,7 @@ class Principal
      *
      * @return string The string representation
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->anonymous ? "[anonymous]" : $this->username;
     }
@@ -108,7 +109,7 @@ class Principal
      * @param array $details Any authentication details
      * @return Principal The principal
      */
-    public static function get($username, array $details)
+    public static function get(string $username, array $details): Principal
     {
         return new self($username, $details);
     }
@@ -118,7 +119,7 @@ class Principal
      *
      * @return Principal The anonymous principal
      */
-    public static function getAnonymous()
+    public static function getAnonymous(): Principal
     {
         if (self::$anon === null) {
             self::$anon = new self(null, [], true);

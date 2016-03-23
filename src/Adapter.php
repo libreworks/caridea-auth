@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -39,5 +40,5 @@ interface Adapter
      * @throws Exception\ConnectionFailed if the access to a remote data source failed
      *     (e.g. missing flat file, unreachable LDAP server, database login denied)
      */
-    public function login(\Psr\Http\Message\ServerRequestInterface $request);
+    public function login(\Psr\Http\Message\ServerRequestInterface $request): Principal;
 }

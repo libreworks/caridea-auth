@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -46,7 +47,7 @@ class TimeoutListener implements \Caridea\Event\Listener
      * @param int $expire The number of seconds until a session should be
      *      considered expired. If omitted, the default is 24 hours.
      */
-    public function __construct($timeout = 1200, $expire = 86400)
+    public function __construct(int $timeout = 1200, int $expire = 86400)
     {
         $this->timeout = (int)$timeout;
         $this->expire = (int)$expire;

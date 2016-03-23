@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -49,7 +50,7 @@ abstract class Event extends \Caridea\Event\Event
      *
      * @return Principal The authenticated principal
      */
-    public function getPrincipal()
+    public function getPrincipal(): Principal
     {
         return $this->principal;
     }
