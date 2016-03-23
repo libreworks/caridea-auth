@@ -4,13 +4,13 @@ namespace Caridea\Auth;
 
 class Principal
 {
-    protected string $username;
+    protected ?string $username;
 
     protected bool $anonymous;
 
     protected array<string,mixed> $details;
     
-    protected function __construct(string $username, array<string,mixed> $details, bool $anonymous = false)
+    protected function __construct(?string $username = null, array<string,mixed> $details = [], bool $anonymous = false)
     {
         $this->username = $username;
         $this->details = $details;
@@ -22,7 +22,7 @@ class Principal
         return [];
     }
 
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return '';
     }

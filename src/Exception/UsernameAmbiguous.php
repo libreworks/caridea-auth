@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -38,7 +39,7 @@ class UsernameAmbiguous extends \UnexpectedValueException implements \Caridea\Au
      * @param string $username The ambiguous username
      * @param \Exception $previous Optional preceding exception
      */
-    public function __construct($username, \Exception $previous = null)
+    public function __construct(string $username, \Exception $previous = null)
     {
         parent::__construct("There are multiple accounts with the username: $username", 0, $previous);
         $this->username = $username;
@@ -49,7 +50,7 @@ class UsernameAmbiguous extends \UnexpectedValueException implements \Caridea\Au
      *
      * @return string The username
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -59,7 +60,7 @@ class Pdo extends AbstractAdapter
      * @param string $table The table (and possible JOINs) from which to SELECT
      * @param string $where Any additional WHERE parameters (e.g. "foo = 'bar'")
      */
-    public function __construct(\PDO $pdo, $fieldUser, $fieldPass, $table, $where = '')
+    public function __construct(\PDO $pdo, string $fieldUser, string $fieldPass, string $table, string $where = '')
     {
         $this->pdo = $pdo;
         $this->fieldUser = $this->checkBlank($fieldUser, "username");
@@ -85,7 +86,7 @@ class Pdo extends AbstractAdapter
      * @throws \Caridea\Auth\Exception\InvalidPassword if the provided password is invalid
      * @throws \Caridea\Auth\Exception\ConnectionFailed if a PDO error is encountered
      */
-    public function login(ServerRequestInterface $request)
+    public function login(ServerRequestInterface $request): \Caridea\Auth\Principal
     {
         $post = (array) $request->getParsedBody();
         $username = $this->ensure($post, 'username');
@@ -111,7 +112,7 @@ class Pdo extends AbstractAdapter
      * @param string $username The username to use for parameter binding
      * @param ServerRequestInterface $request The Server Request message (to use for additional parameter binding)
      */
-    protected function execute($username, ServerRequestInterface $request)
+    protected function execute(string $username, ServerRequestInterface $request): \PDOStatement
     {
         $stmt = $this->pdo->prepare($this->getSql());
         $stmt->execute([$username]);
@@ -123,7 +124,7 @@ class Pdo extends AbstractAdapter
      *
      * @return string The SQL query
      */
-    protected function getSql()
+    protected function getSql(): string
     {
         $sql = "SELECT {$this->fieldUser}, {$this->fieldPass} FROM {$this->table} WHERE {$this->fieldUser} = ?";
         if ($this->where) {
@@ -141,7 +142,7 @@ class Pdo extends AbstractAdapter
      * @throws \Caridea\Auth\Exception\UsernameAmbiguous If there is more than 1 result
      * @throws \Caridea\Auth\Exception\UsernameNotFound If there are 0 results
      */
-    protected function fetchResult(array $results, $username)
+    protected function fetchResult(array $results, string $username): array
     {
         if (count($results) > 1) {
             throw new \Caridea\Auth\Exception\UsernameAmbiguous($username);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -35,7 +36,7 @@ abstract class AbstractAdapter implements \Caridea\Auth\Adapter
      * @return mixed Returns `$object`
      * @throws \InvalidArgumentException if the value is null, empty, or whitespace
      */
-    protected function checkBlank($object, $fieldName)
+    protected function checkBlank($object, string $fieldName)
     {
         if ($object === null || strlen(trim($object)) === 0) {
             throw new \InvalidArgumentException("The \"$fieldName\" argument is required; it cannot be null, empty, nor containing only whitespace");
@@ -51,7 +52,7 @@ abstract class AbstractAdapter implements \Caridea\Auth\Adapter
      * @return mixed Returns the value of `$source[$key]`
      * @throws \Caridea\Auth\Exception\MissingCredentials If `$source[$key]` is empty
      */
-    protected function ensure(array &$source, $key)
+    protected function ensure(array &$source, string $key)
     {
         if (!isset($source[$key]) || !$source[$key]) {
             throw new \Caridea\Auth\Exception\MissingCredentials();
@@ -67,7 +68,7 @@ abstract class AbstractAdapter implements \Caridea\Auth\Adapter
      * @throws \Caridea\Auth\Exception\MissingCredentials If the user-provided password is empty
      * @throws \Caridea\Auth\Exception\InvalidPassword If the password fails to verify
      */
-    protected function verify($input, $hash)
+    protected function verify(string $input, string $hash)
     {
         if (!password_verify($input, $hash)) {
             throw new \Caridea\Auth\Exception\InvalidPassword();
@@ -91,7 +92,7 @@ abstract class AbstractAdapter implements \Caridea\Auth\Adapter
      * @param array $details Any details to add
      * @return array The details
      */
-    protected function details(\Psr\Http\Message\ServerRequestInterface $request, array $details)
+    protected function details(\Psr\Http\Message\ServerRequestInterface $request, array $details): array
     {
         $server = $request->getServerParams();
         return array_merge([

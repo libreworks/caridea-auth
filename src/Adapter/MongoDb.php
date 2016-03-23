@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -32,15 +33,15 @@ class MongoDb extends AbstractAdapter
     /**
      * @var \MongoDB\Driver\Manager
      */
-    private $manager;
+    protected $manager;
     /**
      * @var string
      */
-    private $collection;
+    protected $collection;
     /**
      * @var \MongoDB\Driver\ReadPreference
      */
-    private $rp;
+    protected $rp;
     /**
      * @var string The document field containing the username
      */
@@ -64,7 +65,7 @@ class MongoDb extends AbstractAdapter
      * @param array $query Optional associative array to use to limit user accounts
      * @param \MongoDB\Driver\ReadPreference $rp Optional read preference
      */
-    public function __construct(\MongoDB\Driver\Manager $manager, $collection, $fieldUser, $fieldPass, $query = [], \MongoDB\Driver\ReadPreference $rp = null)
+    public function __construct(\MongoDB\Driver\Manager $manager, string $collection, string $fieldUser, string $fieldPass, array $query = [], \MongoDB\Driver\ReadPreference $rp = null)
     {
         $this->manager = $manager;
         $this->collection = $this->checkBlank($collection, "collection");
@@ -91,7 +92,7 @@ class MongoDb extends AbstractAdapter
      * @throws \Caridea\Auth\Exception\InvalidPassword if the provided password is invalid
      * @throws \Caridea\Auth\Exception\ConnectionFailed if a MongoDB error is encountered
      */
-    public function login(ServerRequestInterface $request)
+    public function login(ServerRequestInterface $request): \Caridea\Auth\Principal
     {
         $post = (array) $request->getParsedBody();
         $username = $this->ensure($post, 'username');
@@ -115,7 +116,7 @@ class MongoDb extends AbstractAdapter
      * @param ServerRequestInterface $request The Server Request message (to use for additional parameter binding)
      * @return \MongoDB\Driver\Cursor The results cursor
      */
-    protected function getResults($username, ServerRequestInterface $request)
+    protected function getResults(string $username, ServerRequestInterface $request): \MongoDB\Driver\Cursor
     {
         $q = new \MongoDB\Driver\Query(
             array_merge($this->query, [($this->fieldUser) => $username]),
@@ -130,11 +131,11 @@ class MongoDb extends AbstractAdapter
      *
      * @param \MongoCursor $results The results
      * @param string $username The attempted username (for Exception purposes)
-     * @return array A single MongoDB document
+     * @return \stdClass A single MongoDB document
      * @throws \Caridea\Auth\Exception\UsernameAmbiguous If there is more than 1 result
      * @throws \Caridea\Auth\Exception\UsernameNotFound If there are 0 results
      */
-    protected function fetchResult(\MongoDB\Driver\Cursor $results, $username)
+    protected function fetchResult(\MongoDB\Driver\Cursor $results, string $username): \stdClass
     {
         $values = $results->toArray();
         if (count($values) > 1) {

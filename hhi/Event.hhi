@@ -2,11 +2,11 @@
 
 namespace Caridea\Auth;
 
-abstract class Event<T> extends \Caridea\Event\Event<T>
+abstract class Event extends \Caridea\Event\Event<\Caridea\Auth\Service>
 {
     protected Principal $principal;
 
-    public function __construct(T $source, Principal $principal)
+    public function __construct(Service $source, Principal $principal)
     {
         parent::__construct($source);
         $this->principal = $principal;

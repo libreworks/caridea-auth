@@ -53,7 +53,7 @@ class Principal
      * @param array $details
      * @param bool $anonymous
      */
-    protected function __construct(string $username, array $details, bool $anonymous = false)
+    protected function __construct(string $username = null, array $details = [], bool $anonymous = false)
     {
         $this->username = $username;
         $this->details = $details;
@@ -75,9 +75,9 @@ class Principal
      *
      * An anonymous user has a `null` username.
      *
-     * @return string The username
+     * @return string The username, or null
      */
-    public function getUsername(): string
+    public function getUsername()
     {
         return $this->username;
     }

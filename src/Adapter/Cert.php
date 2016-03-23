@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -53,7 +54,7 @@ class Cert extends AbstractAdapter
      * @param string $regex A regex to match a username inside the DN (if not
      *     specified, username is the entire DN). Must have one capture pattern.
      */
-    public function __construct($name = 'SSL_CLIENT_S_DN', $regex = null)
+    public function __construct(string $name = 'SSL_CLIENT_S_DN', string $regex = null)
     {
         $this->name = $this->checkBlank($name, "name");
         $this->regex = $regex;
@@ -73,7 +74,7 @@ class Cert extends AbstractAdapter
      * @throws \Caridea\Auth\Exception\MissingCredentials if no value was found
      *     in the SERVER field or the provided regular expression doesn't match
      */
-    public function login(\Psr\Http\Message\ServerRequestInterface $request)
+    public function login(\Psr\Http\Message\ServerRequestInterface $request): \Caridea\Auth\Principal
     {
         $server = $request->getServerParams();
         $username = $dn = $this->ensure($server, $this->name);

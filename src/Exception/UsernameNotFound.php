@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -35,7 +36,7 @@ class UsernameNotFound extends \InvalidArgumentException implements \Caridea\Aut
      * @param string $username The username that wasn't found
      * @param \Exception $previous Optional preceding exception
      */
-    public function __construct($username, \Exception $previous = null)
+    public function __construct(string $username, \Exception $previous = null)
     {
         parent::__construct("Username not found: $username", 0, $previous);
         $this->username = $username;
@@ -46,7 +47,7 @@ class UsernameNotFound extends \InvalidArgumentException implements \Caridea\Aut
      *
      * @return string The username
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }

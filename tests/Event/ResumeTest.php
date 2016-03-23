@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -33,9 +34,19 @@ class ResumeTest extends \PHPUnit_Framework_TestCase
      */
     public function testBasic()
     {
+        $session = $this->getMockBuilder('\\Caridea\\Session\\Session')
+            ->setMethods(['getValues'])
+            ->getMockForAbstractClass();
+        $session->expects($this->any())
+            ->method('getValues')
+            ->willReturnCallback(function ($namespace) use ($session) {
+                return new \Caridea\Session\Values($session, $namespace);
+            });
+        $service = new \Caridea\Auth\Service($session);
+        
         $now = microtime(true);
         $object = new Resume(
-            $this,
+            $service,
             \Caridea\Auth\Principal::getAnonymous(),
             $now - 5,
             $now
@@ -43,5 +54,7 @@ class ResumeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(\Caridea\Auth\Principal::getAnonymous(), $object->getPrincipal());
         $this->assertEquals($now - 5, $object->getFirstActive());
         $this->assertEquals($now, $object->getLastActive());
+        
+        $this->verifyMockObjects();
     }
 }

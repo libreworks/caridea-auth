@@ -22,7 +22,7 @@ namespace Caridea\Auth;
 
 use Caridea\Event\Publisher;
 use Caridea\Session\Session;
-use Caridea\Session\Values;
+use Caridea\Session\Map;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -44,7 +44,7 @@ class Service
      */
     protected $session;
     /**
-     * @var \Caridea\Session\Values The session values
+     * @var \Caridea\Session\Map The session values
      */
     protected $values;
     /**
@@ -172,9 +172,9 @@ class Service
      * Publishes the resume event.
      *
      * @param \Caridea\Auth\Principal $principal The authenticated principal
-     * @param Values $values The session values
+     * @param \Caridea\Session\Map $values The session values
      */
-    protected function publishResume(Principal $principal, Values $values)
+    protected function publishResume(Principal $principal, Map $values)
     {
         if ($this->publisher) {
             $this->publisher->publish(new Event\Resume(

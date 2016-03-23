@@ -36,10 +36,10 @@ abstract class Event extends \Caridea\Event\Event
     /**
      * Creates a new Authentication Event.
      *
-     * @param object $source The source of the event. Cannot be null.
+     * @param Service $source The source of the event. Cannot be null.
      * @param Principal $principal The authenticated principal
      */
-    public function __construct($source, Principal $principal)
+    public function __construct(Service $source, Principal $principal)
     {
         parent::__construct($source);
         $this->principal = $principal;

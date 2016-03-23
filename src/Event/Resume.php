@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Caridea
  *
@@ -39,16 +40,16 @@ class Resume extends \Caridea\Auth\Event
     /**
      * Creates a new resume event.
      *
-     * @param object $source The source of the event. Cannot be null.
+     * @param \Caridea\Auth\Service $source The source of the event. Cannot be null.
      * @param \Caridea\Auth\Principal $principal The authenticated principal
      * @param float $firstActive The authenticated first active time
      * @param float $lastActive The authenticated most recent active time
      */
-    public function __construct($source, \Caridea\Auth\Principal $principal, $firstActive, $lastActive)
+    public function __construct(\Caridea\Auth\Service $source, \Caridea\Auth\Principal $principal, float $firstActive, float $lastActive)
     {
         parent::__construct($source, $principal);
-        $this->firstActive = (float)$firstActive;
-        $this->lastActive = (float)$lastActive;
+        $this->firstActive = $firstActive;
+        $this->lastActive = $lastActive;
     }
     
     /**
@@ -56,7 +57,7 @@ class Resume extends \Caridea\Auth\Event
      *
      * @return float The authenticated first active time
      */
-    public function getFirstActive()
+    public function getFirstActive(): float
     {
         return $this->firstActive;
     }
@@ -66,7 +67,7 @@ class Resume extends \Caridea\Auth\Event
      *
      * @return float The authenticated most recent active time
      */
-    public function getLastActive()
+    public function getLastActive(): float
     {
         return $this->lastActive;
     }
