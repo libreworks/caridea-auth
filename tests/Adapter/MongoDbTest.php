@@ -49,7 +49,8 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
         $hash = password_hash($password, PASSWORD_DEFAULT);
         
         $bulk = new \MongoDB\Driver\BulkWrite();
-        $bulk->insert(['_id' => 1234, 'user' => 'foobar', 'pass' => $hash, 'foo' => 'bar']);
+        $id = new \MongoDB\BSON\ObjectID();
+        $bulk->insert(['_id' => $id, 'user' => 'foobar', 'pass' => $hash, 'foo' => 'bar']);
         $wc = new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY, 1000);
         $this->manager->executeBulkWrite($this->getNamespace(), $bulk, $wc);
         
@@ -66,7 +67,7 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
         
         $this->assertInstanceOf(\Caridea\Auth\Principal::class, $auth);
         $this->assertEquals('foobar', $auth->getUsername());
-        $this->assertEquals(1234, $auth->getDetails()['id']);
+        $this->assertEquals((string) $id, $auth->getDetails()['id']);
     }
 
     /**

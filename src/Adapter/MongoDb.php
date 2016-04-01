@@ -102,7 +102,7 @@ class MongoDb extends AbstractAdapter
             $this->verify($this->ensure($post, 'password'), $doc->{$this->fieldPass});
             return \Caridea\Auth\Principal::get(
                 $username,
-                $this->details($request, ['id' => $doc->_id])
+                $this->details($request, ['id' => (string) $doc->_id])
             );
         } catch (\MongoDB\Driver\Exception\Exception $e) {
             throw new \Caridea\Auth\Exception\ConnectionFailed($e);
