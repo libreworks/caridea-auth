@@ -38,33 +38,33 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers Caridea\Auth\Adapter\AbstractAdapter
-     * @covers Caridea\Auth\Adapter\Mongo::__construct
-     * @covers Caridea\Auth\Adapter\Mongo::login
-     * @covers Caridea\Auth\Adapter\Mongo::getResults
-     * @covers Caridea\Auth\Adapter\Mongo::fetchResult
+     * @covers Caridea\Auth\Adapter\MongoDb::__construct
+     * @covers Caridea\Auth\Adapter\MongoDb::login
+     * @covers Caridea\Auth\Adapter\MongoDb::getResults
+     * @covers Caridea\Auth\Adapter\MongoDb::fetchResult
      */
     public function testLogin()
     {
         $password = 'correct horse battery staple';
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        
+
         $bulk = new \MongoDB\Driver\BulkWrite();
         $id = new \MongoDB\BSON\ObjectID();
         $bulk->insert(['_id' => $id, 'user' => 'foobar', 'pass' => $hash, 'foo' => 'bar']);
         $wc = new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY, 1000);
         $this->manager->executeBulkWrite($this->getNamespace(), $bulk, $wc);
-        
+
         $object = new MongoDb($this->manager, $this->getNamespace(), 'user', 'pass', ['foo' => 'bar']);
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => $password]);
-        
+
         $auth = $object->login($request);
-        
+
         $this->assertInstanceOf(\Caridea\Auth\Principal::class, $auth);
         $this->assertEquals('foobar', $auth->getUsername());
         $this->assertEquals((string) $id, $auth->getDetails()['id']);
@@ -72,10 +72,10 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers Caridea\Auth\Adapter\AbstractAdapter
-     * @covers Caridea\Auth\Adapter\Mongo::__construct
-     * @covers Caridea\Auth\Adapter\Mongo::login
-     * @covers Caridea\Auth\Adapter\Mongo::getResults
-     * @covers Caridea\Auth\Adapter\Mongo::fetchResult
+     * @covers Caridea\Auth\Adapter\MongoDb::__construct
+     * @covers Caridea\Auth\Adapter\MongoDb::login
+     * @covers Caridea\Auth\Adapter\MongoDb::getResults
+     * @covers Caridea\Auth\Adapter\MongoDb::fetchResult
      * @covers Caridea\Auth\Exception\InvalidPassword
      * @expectedException \Caridea\Auth\Exception\InvalidPassword
      */
@@ -83,30 +83,30 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
     {
         $password = 'correct horse battery staple';
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        
+
         $bulk = new \MongoDB\Driver\BulkWrite();
         $bulk->insert(['user' => 'foobar', 'pass' => $hash, 'foo' => 'bar']);
         $wc = new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY, 1000);
         $this->manager->executeBulkWrite($this->getNamespace(), $bulk, $wc);
-        
+
         $object = new MongoDb($this->manager, $this->getNamespace(), 'user', 'pass', ['foo' => 'bar']);
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => 'wrong password']);
-        
+
         $object->login($request);
     }
 
     /**
      * @covers Caridea\Auth\Adapter\AbstractAdapter
-     * @covers Caridea\Auth\Adapter\Mongo::__construct
-     * @covers Caridea\Auth\Adapter\Mongo::login
-     * @covers Caridea\Auth\Adapter\Mongo::getResults
-     * @covers Caridea\Auth\Adapter\Mongo::fetchResult
+     * @covers Caridea\Auth\Adapter\MongoDb::__construct
+     * @covers Caridea\Auth\Adapter\MongoDb::login
+     * @covers Caridea\Auth\Adapter\MongoDb::getResults
+     * @covers Caridea\Auth\Adapter\MongoDb::fetchResult
      * @covers Caridea\Auth\Exception\UsernameAmbiguous
      * @expectedException \Caridea\Auth\Exception\UsernameAmbiguous
      */
@@ -114,53 +114,53 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
     {
         $password = 'correct horse battery staple';
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        
+
         $bulk = new \MongoDB\Driver\BulkWrite();
         $bulk->insert(['user' => 'foobar', 'pass' => $hash]);
         $bulk->insert(['user' => 'foobar', 'pass' => 'hash2']);
         $wc = new \MongoDB\Driver\WriteConcern(\MongoDB\Driver\WriteConcern::MAJORITY, 1000);
         $this->manager->executeBulkWrite($this->getNamespace(), $bulk, $wc);
-        
+
         $object = new MongoDb($this->manager, $this->getNamespace(), 'user', 'pass');
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => 'password']);
-        
+
         $object->login($request);
     }
 
     /**
      * @covers Caridea\Auth\Adapter\AbstractAdapter
-     * @covers Caridea\Auth\Adapter\Mongo::__construct
-     * @covers Caridea\Auth\Adapter\Mongo::login
-     * @covers Caridea\Auth\Adapter\Mongo::getResults
-     * @covers Caridea\Auth\Adapter\Mongo::fetchResult
+     * @covers Caridea\Auth\Adapter\MongoDb::__construct
+     * @covers Caridea\Auth\Adapter\MongoDb::login
+     * @covers Caridea\Auth\Adapter\MongoDb::getResults
+     * @covers Caridea\Auth\Adapter\MongoDb::fetchResult
      * @covers Caridea\Auth\Exception\UsernameNotFound
      * @expectedException \Caridea\Auth\Exception\UsernameNotFound
      */
     public function testLoginNone()
     {
         $object = new MongoDb($this->manager, $this->getNamespace(), 'user', 'pass');
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => null]);
-        
+
         $object->login($request);
     }
-    
+
     /**
      * @covers Caridea\Auth\Adapter\AbstractAdapter
-     * @covers Caridea\Auth\Adapter\Mongo::__construct
-     * @covers Caridea\Auth\Adapter\Mongo::login
-     * @covers Caridea\Auth\Adapter\Mongo::getResults
+     * @covers Caridea\Auth\Adapter\MongoDb::__construct
+     * @covers Caridea\Auth\Adapter\MongoDb::login
+     * @covers Caridea\Auth\Adapter\MongoDb::getResults
      * @covers Caridea\Auth\Exception\ConnectionFailed
      * @expectedException \Caridea\Auth\Exception\ConnectionFailed
      * @expectedExceptionMessage Cannot read from source data
@@ -169,17 +169,17 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
     {
         $manager = new \MongoDB\Driver\Manager("mongodb://localhost:27018");
         $object = new MongoDb($manager, $this->getNamespace(), 'user', 'pass', []);
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => null]);
-        
+
         $object->login($request);
     }
-    
+
     /**
      * Return the connection URI.
      *
@@ -191,7 +191,7 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
     {
         return getenv('MONGODB_URI') ?: 'mongodb://127.0.0.1:27017';
     }
-    
+
     /**
      * Return the test collection name.
      *
@@ -204,7 +204,7 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
          $class = new \ReflectionClass($this);
          return sprintf('%s.%s', $class->getShortName(), hash('crc32b', $this->getName()));
     }
-    
+
     /**
      * Return the test database name.
      *
@@ -216,7 +216,7 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
     {
         return getenv('MONGODB_DATABASE') ?: 'caridea_test';
     }
-    
+
     /**
      * Return the test namespace.
      *
@@ -227,5 +227,5 @@ class MongoDbTest extends \PHPUnit_Framework_TestCase
     protected function getNamespace()
     {
          return sprintf('%s.%s', $this->getDatabaseName(), $this->getCollectionName());
-    }    
+    }
 }

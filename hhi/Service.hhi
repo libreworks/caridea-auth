@@ -7,26 +7,26 @@ use Caridea\Session\Session;
 use Caridea\Session\Map as Smap;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Service
+class Service implements \Caridea\Event\PublisherAware
 {
     use \Psr\Log\LoggerAwareTrait;
-    
+    use \Caridea\Event\PublisherSetter;
+
     protected ?Adapter $adapter;
 
     protected Session $session;
 
     protected Smap $values;
 
-    protected ?Publisher $publisher;
-
     protected ?Principal $principal;
-    
+
     public function __construct(Session $session, ?Publisher $publisher = null, ?Adapter $adapter = null)
     {
         $this->session = $session;
         $this->values = $session->getValues(__CLASS__);
+        $this->publisher = $publisher ?? new \Caridea\Event\NullPublisher();
     }
-    
+
     public function getPrincipal(): Principal
     {
         return Principal::getAnonymous();
@@ -36,17 +36,17 @@ class Service
     {
         return false;
     }
-    
+
     protected function publishLogin(Principal $principal): bool
     {
         return true;
     }
-    
+
     public function resume(): bool
     {
         return false;
     }
-    
+
     protected function publishResume(Principal $principal, Smap $values): void
     {
     }
@@ -55,7 +55,7 @@ class Service
     {
         return false;
     }
-    
+
     protected function publishLogout(Principal $principal): bool
     {
         return false;

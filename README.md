@@ -7,6 +7,7 @@ This is its authentication component. It provides a way to authenticate principa
 
 Included are three adapters for authentication through MongoDB, PDO, and X.509 client SSL certificates. You can easily write your own adapter for other authentication sources like IMAP, LDAP, or OAuth2.
 
+[![Packagist](https://img.shields.io/packagist/v/caridea/auth.svg)](https://packagist.org/packages/caridea/auth)
 [![Build Status](https://travis-ci.org/libreworks/caridea-auth.svg)](https://travis-ci.org/libreworks/caridea-auth)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/libreworks/caridea-auth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/libreworks/caridea-auth/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/libreworks/caridea-auth/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/libreworks/caridea-auth/?branch=master)
@@ -93,6 +94,6 @@ Upon login, `Service` will broadcast a `Caridea\Auth\Event\Logout` if `$publishe
 
 ### Login Timeout
 
-A component has been included, the `TimeoutListener` which can be registered in a `Caridea\Event\Publisher`. 
+A component has been included, the `TimeoutListener` which can be registered in a `Caridea\Event\Publisher`.
 
 It listens for `Caridea\Auth\Event\Resume` and will log out a user if an authenticated session has either gone on too long or has been idle for too long.

@@ -31,10 +31,11 @@ use Psr\Http\Message\ServerRequestInterface;
  * @copyright 2015-2016 LibreWorks contributors
  * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
  */
-class Service
+class Service implements \Caridea\Event\PublisherAware
 {
     use \Psr\Log\LoggerAwareTrait;
-    
+    use \Caridea\Event\PublisherSetter;
+
     /**
      * @var Adapter The default auth adapter
      */
@@ -48,14 +49,10 @@ class Service
      */
     protected $values;
     /**
-     * @var \Caridea\Event\Publisher The event publisher
-     */
-    protected $publisher;
-    /**
      * @var Principal The authenticated principal
      */
     protected $principal;
-    
+
     /**
      * Creates a new authentication service.
      *
@@ -67,11 +64,11 @@ class Service
     {
         $this->session = $session;
         $this->values = $session->getValues(__CLASS__);
-        $this->publisher = $publisher;
+        $this->publisher = $publisher ?? new \Caridea\Event\NullPublisher();
         $this->adapter = $adapter;
         $this->logger = new \Psr\Log\NullLogger();
     }
-    
+
     /**
      * Gets the currently authenticated principal.
      *
@@ -88,7 +85,7 @@ class Service
         }
         return $this->principal;
     }
-    
+
     /**
      * Authenticates a principal.
      *
@@ -109,28 +106,28 @@ class Service
         if (!$started) {
             return false;
         }
-        
-        $login = $adapter === null ? $this->adapter : $adapter;
+
+        $login = $adapter ?? $this->adapter;
         if ($login === null) {
             throw new \InvalidArgumentException('You must specify an adapter for authentication');
         }
         $this->principal = $principal = $login->login($request);
-        
+
         $this->session->clear();
         $this->session->regenerateId();
-        
+
         $this->values->offsetSet('principal', $principal);
         $now = microtime(true);
         $this->values->offsetSet('firstActive', $now);
         $this->values->offsetSet('lastActive', $now);
-        
+
         $this->logger->info(
             "Authentication login: {user}",
             ['user' => $principal]
         );
         return $this->publishLogin($principal);
     }
-    
+
     /**
      * Publishes the login event.
      *
@@ -139,12 +136,10 @@ class Service
      */
     protected function publishLogin(Principal $principal): bool
     {
-        if ($this->publisher) {
-            $this->publisher->publish(new Event\Login($this, $principal));
-        }
+        $this->publisher->publish(new Event\Login($this, $principal));
         return true;
     }
-    
+
     /**
      * Resumes an existing authenticated session.
      *
@@ -154,20 +149,20 @@ class Service
     {
         if ($this->values->offsetExists('principal')) {
             $this->principal = $this->values->get('principal');
-            
+
             $this->logger->info(
                 "Authentication resume: {user}",
                 ['user' => $this->principal]
             );
             $this->publishResume($this->principal, $this->values);
-            
+
             $this->values->offsetSet('lastActive', microtime(true));
-            
+
             return true;
         }
         return false;
     }
-    
+
     /**
      * Publishes the resume event.
      *
@@ -176,16 +171,14 @@ class Service
      */
     protected function publishResume(Principal $principal, Map $values)
     {
-        if ($this->publisher) {
-            $this->publisher->publish(new Event\Resume(
-                $this,
-                $principal,
-                $values->get('firstActive'),
-                $values->get('lastActive')
-            ));
-        }
+        $this->publisher->publish(new Event\Resume(
+            $this,
+            $principal,
+            $values->get('firstActive') ?? 0.0,
+            $values->get('lastActive') ?? 0.0
+        ));
     }
-    
+
     /**
      * Logs out the currently authenticated principal.
      *
@@ -207,7 +200,7 @@ class Service
         }
         return false;
     }
-    
+
     /**
      * Publishes the logout event.
      *
@@ -216,9 +209,7 @@ class Service
      */
     protected function publishLogout(Principal $principal): bool
     {
-        if ($this->publisher) {
-            $this->publisher->publish(new Event\Logout($this, $principal));
-        }
+        $this->publisher->publish(new Event\Logout($this, $principal));
         return true;
     }
 }

@@ -39,9 +39,13 @@ class PdoTest extends \PHPUnit_Framework_TestCase
     {
         $password = 'correct horse battery staple';
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        
-        $pdo = $this->getMock(MockPdo::class, ['prepare']);
-        $stmt = $this->getMock(MockPdoStatement::class, ['execute', 'fetchAll']);
+
+        $pdo = $this->getMockBuilder(MockPdo::class)
+            ->setMethods(['prepare'])
+            ->getMock();
+        $stmt = $this->getMockBuilder(MockPdoStatement::class)
+            ->setMethods(['execute', 'fetchAll'])
+            ->getMock();
         $pdo->expects($this->any())
             ->method('prepare')
             ->with($this->equalTo("SELECT user, pass FROM mytable WHERE user = ? AND (foo = 'bar')"))
@@ -49,21 +53,21 @@ class PdoTest extends \PHPUnit_Framework_TestCase
         $stmt->expects($this->any())
             ->method('fetchAll')
             ->willReturn([['foobar', $hash]]);
-        
+
         $object = new Pdo($pdo, 'user', 'pass', 'mytable', "foo = 'bar'");
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => $password]);
-        
+
         $auth = $object->login($request);
-        
+
         $this->assertInstanceOf(\Caridea\Auth\Principal::class, $auth);
         $this->assertEquals('foobar', $auth->getUsername());
-        
+
         $this->verifyMockObjects();
     }
 
@@ -80,9 +84,13 @@ class PdoTest extends \PHPUnit_Framework_TestCase
     {
         $password = 'correct horse battery staple';
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        
-        $pdo = $this->getMock(MockPdo::class, ['prepare']);
-        $stmt = $this->getMock(MockPdoStatement::class, ['execute', 'fetchAll']);
+
+        $pdo = $this->getMockBuilder(MockPdo::class)
+            ->setMethods(['prepare'])
+            ->getMock();
+        $stmt = $this->getMockBuilder(MockPdoStatement::class)
+            ->setMethods(['execute', 'fetchAll'])
+            ->getMock();
         $pdo->expects($this->any())
             ->method('prepare')
             ->with($this->equalTo("SELECT user, pass FROM mytable WHERE user = ? AND (foo = 'baz')"))
@@ -90,16 +98,16 @@ class PdoTest extends \PHPUnit_Framework_TestCase
         $stmt->expects($this->any())
             ->method('fetchAll')
             ->willReturn([['foobar', $hash]]);
-        
+
         $object = new Pdo($pdo, 'user', 'pass', 'mytable', "foo = 'baz'");
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => 'wrong password']);
-        
+
         $object->login($request);
     }
 
@@ -114,8 +122,12 @@ class PdoTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoginMulti()
     {
-        $pdo = $this->getMock(MockPdo::class, ['prepare']);
-        $stmt = $this->getMock(MockPdoStatement::class, ['execute', 'fetchAll']);
+        $pdo = $this->getMockBuilder(MockPdo::class)
+            ->setMethods(['prepare'])
+            ->getMock();
+        $stmt = $this->getMockBuilder(MockPdoStatement::class)
+            ->setMethods(['execute', 'fetchAll'])
+            ->getMock();
         $pdo->expects($this->any())
             ->method('prepare')
             ->with($this->equalTo("SELECT user, pass FROM mytable WHERE user = ?"))
@@ -123,16 +135,16 @@ class PdoTest extends \PHPUnit_Framework_TestCase
         $stmt->expects($this->any())
             ->method('fetchAll')
             ->willReturn([['foobar', ''], ['foobar', '']]);
-        
+
         $object = new Pdo($pdo, 'user', 'pass', 'mytable');
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => 'password']);
-        
+
         $object->login($request);
     }
 
@@ -147,27 +159,31 @@ class PdoTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoginNone()
     {
-        $pdo = $this->getMock(MockPdo::class, ['prepare']);
-        $stmt = $this->getMock(MockPdoStatement::class, ['execute', 'fetchAll']);
+        $pdo = $this->getMockBuilder(MockPdo::class)
+            ->setMethods(['prepare'])
+            ->getMock();
+        $stmt = $this->getMockBuilder(MockPdoStatement::class)
+            ->setMethods(['execute', 'fetchAll'])
+            ->getMock();
         $pdo->expects($this->any())
             ->method('prepare')
             ->willReturn($stmt);
         $stmt->expects($this->any())
             ->method('fetchAll')
             ->willReturn([]);
-        
+
         $object = new Pdo($pdo, 'user', 'pass', 'mytable');
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => null]);
-        
+
         $object->login($request);
     }
-    
+
     /**
      * @covers Caridea\Auth\Adapter\AbstractAdapter
      * @covers Caridea\Auth\Adapter\Pdo::__construct
@@ -179,20 +195,22 @@ class PdoTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoginConnection()
     {
-        $pdo = $this->getMock(MockPdo::class, ['prepare']);
+        $pdo = $this->getMockBuilder(MockPdo::class)
+            ->setMethods(['prepare'])
+            ->getMock();
         $pdo->expects($this->once())
             ->method('prepare')
             ->willThrowException(new \PDOException("Yup", 0));
 
         $object = new Pdo($pdo, 'user', 'pass', 'mytable');
-        
+
         $request = $this->getMockBuilder(\Psr\Http\Message\ServerRequestInterface::class)
             ->setMethods(['getParsedBody'])
             ->getMockForAbstractClass();
         $request->expects($this->any())
             ->method('getParsedBody')
             ->willReturn(['username' => 'foobar', 'password' => null]);
-        
+
         $object->login($request);
     }
 }
@@ -202,11 +220,31 @@ class MockPdo extends \PDO
     public function __construct()
     {
     }
+
+    public function prepare($statement, $driver_options = array())
+    {
+    }
+
+    public function query($statement)
+    {
+    }
 }
 
 class MockPdoStatement extends \PDOStatement
 {
     public function __construct()
+    {
+    }
+
+    public function fetchAll($fetch_style = null, $fetch_argument = null, $ctor_args = array())
+    {
+    }
+
+    public function bindValue($parameter, $value, $data_type = \PDO::PARAM_STR)
+    {
+    }
+
+    public function execute($input_parameters = null)
     {
     }
 }
