@@ -1,5 +1,7 @@
 sudo: required
 dist: trusty
+services:
+  - mongodb
 language: php
 php:
   - 7
