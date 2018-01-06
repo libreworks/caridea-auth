@@ -12,8 +12,6 @@ Included are three adapters for authentication through MongoDB, PDO, and X.509 c
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/libreworks/caridea-auth/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/libreworks/caridea-auth/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/libreworks/caridea-auth/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/libreworks/caridea-auth/?branch=master)
 
-We've also included `.hhi` files for the Hack typechecker.
-
 ## Installation
 
 You can install this library using Composer:
@@ -22,7 +20,8 @@ You can install this library using Composer:
 $ composer require caridea/auth
 ```
 
-* The master branch (version 2.x) of this project requires PHP 7.0 and depends on `caridea/event`, `caridea/session`, `psr/log`, and `psr/http-message`.
+* The master branch (version 3.x) of this project requires PHP 7.1 and depends on `caridea/event`, `caridea/session`, `psr/log`, and `psr/http-message`.
+* Version 2.x of this project requires PHP 7.0 and depends on `caridea/event`, `caridea/session`, `psr/log`, and `psr/http-message`.
 * Version 1.x of this project requires PHP 5.5 and depends on `caridea/event`, `caridea/session`, `psr/log`, and `psr/http-message`.
 
 ## Compliance

@@ -15,16 +15,16 @@ declare(strict_types=1);
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * @copyright 2015-2016 LibreWorks contributors
- * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
+ * @copyright 2015-2018 LibreWorks contributors
+ * @license   Apache-2.0
  */
 namespace Caridea\Auth;
 
 /**
  * Security principal; an authenticated or anonymous user.
  *
- * @copyright 2015-2016 LibreWorks contributors
- * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
+ * @copyright 2015-2018 LibreWorks contributors
+ * @license   Apache-2.0
  */
 class Principal
 {
@@ -40,26 +40,26 @@ class Principal
      * @var array Associative array of extra details
      */
     protected $details;
-    
+
     /**
      * @var Principal singleton instance of the anonymous Principal
      */
     private static $anon;
-    
+
     /**
      * Creates a new security principal.
      *
-     * @param string $username
+     * @param string|null $username
      * @param array $details
      * @param bool $anonymous
      */
-    protected function __construct(string $username = null, array $details = [], bool $anonymous = false)
+    protected function __construct(?string $username = null, array $details = [], bool $anonymous = false)
     {
         $this->username = $username;
         $this->details = $details;
         $this->anonymous = $anonymous;
     }
-    
+
     /**
      * Gets a key-value array containing any authentication details.
      *
@@ -69,19 +69,19 @@ class Principal
     {
         return $this->details;
     }
-    
+
     /**
      * Gets the authenticated principal username.
      *
      * An anonymous user has a `null` username.
      *
-     * @return string The username, or null
+     * @return string|null The username, or `null`
      */
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->username;
     }
-    
+
     /**
      * Gets whether this authentication is anonymous.
      *
@@ -91,7 +91,7 @@ class Principal
     {
         return $this->anonymous;
     }
-    
+
     /**
      * Gets a string representation.
      *
@@ -101,7 +101,7 @@ class Principal
     {
         return $this->anonymous ? "[anonymous]" : $this->username;
     }
-    
+
     /**
      * Gets a non-anonymous Principal.
      *
@@ -113,7 +113,7 @@ class Principal
     {
         return new self($username, $details);
     }
-    
+
     /**
      * Gets a token representing an anonymous authentication.
      *

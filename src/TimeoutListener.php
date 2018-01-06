@@ -15,21 +15,21 @@ declare(strict_types=1);
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * @copyright 2015-2016 LibreWorks contributors
- * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
+ * @copyright 2015-2018 LibreWorks contributors
+ * @license   Apache-2.0
  */
 namespace Caridea\Auth;
 
 /**
  * A listener which will log out a session if it's idle or has been active for too long.
  *
- * @copyright 2015-2016 LibreWorks contributors
- * @license   http://opensource.org/licenses/Apache-2.0 Apache 2.0 License
+ * @copyright 2015-2018 LibreWorks contributors
+ * @license   Apache-2.0
  */
 class TimeoutListener implements \Caridea\Event\Listener
 {
     use \Psr\Log\LoggerAwareTrait;
-    
+
     /**
      * @var int Session timeout length in seconds
      */
@@ -38,7 +38,7 @@ class TimeoutListener implements \Caridea\Event\Listener
      * @var int Session expiration length in seconds
      */
     protected $expire;
-    
+
     /**
      * Creates a new timeout listener.
      *
@@ -53,13 +53,11 @@ class TimeoutListener implements \Caridea\Event\Listener
         $this->expire = (int)$expire;
         $this->logger = new \Psr\Log\NullLogger();
     }
-    
+
     /**
-     * Notifies this object that an event has occurred.
-     *
-     * @param \Caridea\Event\Event $event The incoming event
+     * {@inheritDoc}
      */
-    public function notify(\Caridea\Event\Event $event)
+    public function notify(\Caridea\Event\Event $event): void
     {
         if ($event instanceof Event\Resume) {
             $now = microtime(true);
