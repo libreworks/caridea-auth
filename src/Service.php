@@ -31,7 +31,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @copyright 2015-2018 LibreWorks contributors
  * @license   Apache-2.0
  */
-class Service implements \Caridea\Event\PublisherAware
+class Service implements \Caridea\Event\PublisherAware, \Psr\Log\LoggerAwareInterface
 {
     use \Psr\Log\LoggerAwareTrait;
     use \Caridea\Event\PublisherSetter;
@@ -57,10 +57,10 @@ class Service implements \Caridea\Event\PublisherAware
      * Creates a new authentication service.
      *
      * @param Session $session The session utility
-     * @param Publisher $publisher An event publisher to broadcast authentication events
-     * @param Adapter $adapter A default authentication adapter
+     * @param Publisher|null $publisher An event publisher to broadcast authentication events
+     * @param Adapter|null $adapter A default authentication adapter
      */
-    public function __construct(Session $session, Publisher $publisher = null, Adapter $adapter = null)
+    public function __construct(Session $session, ?Publisher $publisher = null, ?Adapter $adapter = null)
     {
         $this->session = $session;
         $this->values = $session->getValues(__CLASS__);
@@ -90,7 +90,7 @@ class Service implements \Caridea\Event\PublisherAware
      * Authenticates a principal.
      *
      * @param ServerRequestInterface $request The Server Request message containing credentials
-     * @param Adapter $adapter An optional adapter to use.
+     * @param Adapter|null $adapter An optional adapter to use.
      *     Will use the default authentication adapter if none is specified.
      * @return bool Whether the session could be established
      * @throws \InvalidArgumentException If no adapter is provided and no default adapter is set
@@ -100,7 +100,7 @@ class Service implements \Caridea\Event\PublisherAware
      * @throws Exception\ConnectionFailed if the access to a remote data source failed
      *     (e.g. missing flat file, unreachable LDAP server, database login denied)
      */
-    public function login(ServerRequestInterface $request, Adapter $adapter = null): bool
+    public function login(ServerRequestInterface $request, ?Adapter $adapter = null): bool
     {
         $started = $this->session->resume() || $this->session->start();
         if (!$started) {
